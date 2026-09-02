@@ -1,0 +1,145 @@
+<xml xmlns="http://www.w3.org/1999/xhtml" is_dbot="true" collection="false">
+  <variables>
+    <variable type="">Initial Stake</variable>
+    <variable type="">Win Stake</variable>
+    <variable type="">Martingale Factor</variable>
+    <variable type="">Target Profit</variable>
+    <variable type="">Stop Loss</variable>
+    <variable type="">Prediction 1</variable>
+    <variable type="">Prediction 2</variable>
+    <variable type="">Contract Type</variable>
+  </variables>
+  
+  <block type="trade_definition" id="trade_def" x="0" y="0">
+    <statement name="INITIALIZATION">
+      <!-- Weka Vigezo vyako hapa -->
+      <block type="variables_set" id="v1">
+        <field name="VAR" id="Initial Stake">Initial Stake</field>
+        <value name="VALUE">
+          <block type="math_number"><field name="NUM">0.35</field></block>
+        </value>
+        <next>
+          <block type="variables_set" id="v2">
+            <field name="VAR" id="Win Stake">Win Stake</field>
+            <value name="VALUE">
+              <block type="math_number"><field name="NUM">0.35</field></block>
+            </value>
+            <next>
+              <block type="variables_set" id="v3">
+                <field name="VAR" id="Martingale Factor">Martingale Factor</field>
+                <value name="VALUE">
+                  <block type="math_number"><field name="NUM">2</field></block>
+                </value>
+                <next>
+                  <block type="variables_set" id="v4">
+                    <field name="VAR" id="Target Profit">Target Profit</field>
+                    <value name="VALUE">
+                      <block type="math_number"><field name="NUM">10</field></block>
+                    </value>
+                    <next>
+                      <block type="variables_set" id="v5">
+                        <field name="VAR" id="Stop Loss">Stop Loss</field>
+                        <value name="VALUE">
+                          <block type="math_number"><field name="NUM">50</field></block>
+                        </value>
+                        <next>
+                          <block type="variables_set" id="v6">
+                            <field name="VAR" id="Prediction 1">Prediction 1</field>
+                            <value name="VALUE">
+                              <block type="math_number"><field name="NUM">1</field></block>
+                            </value>
+                            <next>
+                              <block type="variables_set" id="v7">
+                                <field name="VAR" id="Prediction 2">Prediction 2</field>
+                                <value name="VALUE">
+                                  <block type="math_number"><field name="NUM">5</field></block>
+                                </value>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    
+    <statement name="SUBMARKET">
+      <block type="market_definition" id="market_def">
+        <field name="SYMBOL">R_100</field>
+        <statement name="STRATEGY_PURCHASE">
+          <block type="purchase" id="purchase_block">
+            <field name="PURCHASE">CALL</field>
+          </block>
+        </statement>
+      </block>
+    </statement>
+  </block>
+
+  <!-- Sehemu ya Ujumbe na Malengo (Notifications & Messages) -->
+  <block type="after_purchase" id="after_purchase_block" x="0" y="600">
+    <statement name="AFTERPURCHASE_STACK">
+      <block type="controls_if" id="check_target">
+        <mutation elseif="1"></mutation>
+        <value name="IF0">
+          <block type="logic_compare" id="c1">
+            <field name="OP">GTE</field>
+            <value name="A">
+              <block type="total_profit"></block>
+            </value>
+            <value name="B">
+              <block type="variables_get"><field name="VAR">Target Profit</field></block>
+            </value>
+          </block>
+        </value>
+        <statement name="DO0">
+          <block type="text_print" id="print_win">
+            <value name="TEXT">
+              <block type="text_join" id="tj1">
+                <mutation items="2"></mutation>
+                <value name="ADD0">
+                  <block type="total_profit"></block>
+                </value>
+                <value name="ADD1">
+                  <block type="text">
+                    <field name="TEXT"> Visqa mmoja congratulations 🎉 let’s continue fuck this market</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+          </block>
+        </statement>
+        <value name="IF1">
+          <block type="logic_compare" id="c2">
+            <field name="OP">LTE</field>
+            <value name="A">
+              <block type="total_profit"></block>
+            </value>
+            <value name="B">
+              <block type="math_single">
+                <field name="OP">NEG</field>
+                <value name="NUM">
+                  <block type="variables_get"><field name="VAR">Stop Loss</field></block>
+                </value>
+              </block>
+            </value>
+          </block>
+        </value>
+        <statement name="DO1">
+          <block type="text_print" id="print_loss">
+            <value name="TEXT">
+              <block type="text">
+                <field name="TEXT">Visqa mmoja sorry let’s try again later 😭</field>
+              </block>
+            </value>
+          </block>
+        </statement>
+      </block>
+    </statement>
+  </block>
+</xml>
