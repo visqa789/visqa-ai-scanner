@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visqa AI Market Scanner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Visqa AI Market Scanner</h1>
+        <div id="connection-status">Connecting to Deriv...</div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <label for="market-select">Select Market:</label>
+            <select id="market-select">
+                <option value="1HZ100V">Volatility 100 (1s) Index</option>
+                <option value="R_100">Volatility 100 Index</option>
+                <option value="R_75">Volatility 75 Index</option>
+                <option value="R_50">Volatility 50 Index</option>
+                <option value="R_25">Volatility 25 Index</option>
+                <option value="R_10">Volatility 10 Index</option>
+            </select>
+        </div>
+
+        <div class="card prediction-card">
+            <h2>🤖 AI Prediction Signal</h2>
+            <div id="ai-scanner-output">
+                <p>Waiting for tick data...</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Digit Frequency Analysis (Last 50 Ticks)</h3>
+            <div id="digit-bars" class="digit-grid"></div>
+        </div>
+    </div>
+
+    <script type="module" src="ai-market-scanner.js"></script>
+</body>
+</html>
