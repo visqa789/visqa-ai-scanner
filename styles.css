@@ -1,0 +1,77 @@
+:root {
+    --bg-color: #0b0f14;
+    --panel-color: #161e27;
+    --accent-color: #00e5ff;
+    --green-color: #00e676;
+    --red-color: #ff5252;
+    --text-color: #ffffff;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 15px;
+}
+
+.header {
+    text-align: center;
+    border-bottom: 1px solid #232e3c;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.header h1 {
+    color: var(--accent-color);
+    margin: 0 0 5px 0;
+    font-size: 22px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.card {
+    background: var(--panel-color);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #232e3c;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    background: #0b0f14;
+    color: #fff;
+    border: 1px solid var(--accent-color);
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.prediction-card {
+    border-left: 4px solid var(--accent-color);
+}
+
+.digit-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.digit-item {
+    background: #0b0f14;
+    padding: 8px;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.digit-item strong {
+    display: block;
+    font-size: 16px;
+    color: var(--accent-color);
+}
