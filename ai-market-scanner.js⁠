@@ -1,0 +1,91 @@
+const app_id = 1089; // Demo App ID
+let ws;
+let currentSymbol = "1HZ100V";
+let ticksHistory = [];
+let digitCounts = Array(10).fill(0);
+
+function connectWebSocket() {
+    ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${app_id}`);
+
+    ws.onopen = () => {
+        document.getElementById("connection-status").innerText = "Connected to Deriv Live Feed";
+        document.getElementById("connection-status").style.color = "#00e676";
+        subscribeTicks(currentSymbol);
+    };
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.msg_type === "tick") {
+            processTick(data.tick);
+        }
+    };
+
+    ws.onclose = () => {
+        document.getElementById("connection-status").innerText = "Disconnected. Reconnecting...";
+        document.getElementById("connection-status").style.color = "#ff5252";
+        setTimeout(connectWebSocket, 3000);
+    };
+}
+
+function subscribeTicks(symbol) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ forget_all: "ticks" }));
+        ws.send(JSON.stringify({ ticks: symbol }));
+        ticksHistory = [];
+        digitCounts = Array(10).fill(0);
+    }
+}
+
+function processTick(tick) {
+    const quoteStr = tick.quote.toFixed(tick.pip_size);
+    const lastDigit = parseInt(quoteStr.slice(-1));
+
+    ticksHistory.push(lastDigit);
+    if (ticksHistory.length > 50) {
+        const removedDigit = ticksHistory.shift();
+        digitCounts[removedDigit]--;
+    }
+    digitCounts[lastDigit]++;
+
+    updateUI();
+}
+
+function updateUI() {
+    if (ticksHistory.length < 10) return;
+
+    const total = ticksHistory.length;
+    const maxVal = Math.max(...digitCounts);
+    const minVal = Math.min(...digitCounts);
+    
+    const hotDigit = digitCounts.indexOf(maxVal);
+    const coldDigit = digitCounts.indexOf(minVal);
+    
+    const hotPct = ((maxVal / total) * 100).toFixed(1);
+
+    document.getElementById("ai-scanner-output").innerHTML = `
+        <div style="font-size: 16px;">
+            <p>🎯 <strong>Digit Match Signal:</strong> <span style="color:#00e676; font-size: 22px;">${hotDigit}</span> (${hotPct}% chance)</p>
+            <p>🛡️ <strong>Digit Differ Signal:</strong> <span style="color:#ff5252; font-size: 20px;">${coldDigit}</span></p>
+            <small>Analyzed last ${total} ticks</small>
+        </div>
+    `;
+
+    let gridHtml = "";
+    for (let i = 0; i < 10; i++) {
+        const pct = ((digitCounts[i] / total) * 100).toFixed(0);
+        gridHtml += `
+            <div class="digit-item">
+                <div>Digit ${i}</div>
+                <strong>${pct}%</strong>
+            </div>
+        `;
+    }
+    document.getElementById("digit-bars").innerHTML = gridHtml;
+}
+
+document.getElementById("market-select").addEventListener("change", (e) => {
+    currentSymbol = e.target.value;
+    subscribeTicks(currentSymbol);
+});
+
+connectWebSocket();
