@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<trading_bot>
+    <settings>
+        <mode>DEMO</mode>
+
+        <take_profit>
+            <enabled>true</enabled>
+            <target>10.00</target>
+            <message>
+                Visqa mmoja congratulations 🎉 let's continue fuck this market
+            </message>
+        </take_profit>
+
+        <stop_loss>
+            <enabled>true</enabled>
+            <limit>5.00</limit>
+            <message>
+                Visqa mmoja sorry let's try again later 😭
+            </message>
+        </stop_loss>
+    </settings>
+
+    <stakes>
+        <stake_1>1.00</stake_1>
+        <stake_2>2.00</stake_2>
+
+        <martingale>
+            <enabled>true</enabled>
+            <multiplier>2</multiplier>
+            <max_levels>3</max_levels>
+        </martingale>
+    </stakes>
+
+    <predictions>
+        <prediction_1>
+            <enabled>true</enabled>
+            <value>0</value>
+        </prediction_1>
+
+        <prediction_2>
+            <enabled>true</enabled>
+            <value>9</value>
+        </prediction_2>
+    </predictions>
+
+    <contracts>
+        <digits>true</digits>
+        <rise_fall>true</rise_fall>
+        <higher_lower>true</higher_lower>
+        <touch_no_touch>true</touch_no_touch>
+        <in_out>true</in_out>
+        <even_odd>true</even_odd>
+        <over_under>true</over_under>
+    </contracts>
+
+    <profit_tracker>
+        <enabled>true</enabled>
+        <display_currency>USD</display_currency>
+        <show_profit_on_target>true</show_profit_on_target>
+    </profit_tracker>
+</trading_bot>
