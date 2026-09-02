@@ -1,0 +1,99 @@
+// === SETTINGS & CONFIGURATION ===
+const config = {
+    stake1: 1.05,          // Stake ya kwanza
+    stake2: 2.10,          // Stake ya pili (ikiwa na mzunguko tofauti)
+    prediction1: 5,        // Prediction ya kwanza (mf. Digit Differs / Matches)
+    prediction2: 3,        // Prediction ya pili
+    takeProfit: 10.0,      // USD ya kusimama ukiwa na faida
+    stopLoss: -20.0,       // USD ya kusimama ukiwa na hasara
+    maxMartingaleLevels: 5,// Idadi kubwa ya mara ya kuongeza dau kwenye hasara
+    contractType: 'DIGITDIFF', // Aina ya kontrata (mf. DIGITDIFF, DIGITMATCH, CALL, PUT)
+    currency: 'USD'
+};
+
+// === STATE VARIABLES ===
+let currentStake = config.stake1;
+let totalProfit = 0.0;
+let martingaleLevel = 0;
+let isRunning = false;
+
+// === START BOT FUNCTION ===
+function startBot() {
+    if (isRunning) return;
+    isRunning = true;
+    totalProfit = 0.0;
+    currentStake = config.stake1;
+    martingaleLevel = 0;
+    
+    console.log("Bot imeanza kufanya kazi...");
+    // Hapa ndipo unaunganisha na Deriv WebSocket API kutuma oda (Buy contract)
+    executeTrade();
+}
+
+// === EXECUTE TRADE (SIMULATOR / API CALL) ===
+function executeTrade() {
+    if (!isRunning) return;
+
+    // Angalia kama umefika Take Profit au Stop Loss kabla ya kuendelea
+    if (totalProfit >= config.takeProfit) {
+        console.log(`Visqa mmoja congratulations 🎉 let's continue fuck this market. Total Profit: $${totalProfit.toFixed(2)}`);
+        stopBot();
+        return;
+    }
+
+    if (totalProfit <= config.stopLoss) {
+        console.log(`Visqa mmoja sorry let's try again later 😭. Total Loss: $${totalProfit.toFixed(2)}`);
+        stopBot();
+        return;
+    }
+
+    // Mfano wa kutuma oda (Place Trade Logic)
+    console.log(`Inaweka oda: Type = ${config.contractType}, Stake = $${currentStake}, Prediction = ${config.prediction1}`);
+    
+    // Simulating trade result (Hapa badala yake unaweka majibu halisi kutoka Deriv API)
+    setTimeout(() => {
+        simulateTradeResult();
+    }, 2000);
+}
+
+// === HANDLE TRADE RESULT & MARTINGALE ===
+function simulateTradeResult() {
+    // Hapa tunatengeneza majibu ya mfano (Win au Loss)
+    const isWin = Math.random() >= 0.5; 
+    const profitOrLoss = isWin ? (currentStake * 0.95) : (-currentStake); // Mfano wa payout
+
+    totalProfit += profitOrLoss;
+    console.log(`Matokeo: ${isWin ? 'USHINDI (WIN)' : 'HASARA (LOSS)'} | P/L: $${profitOrLoss.toFixed(2)}`);
+    console.log(`Profit Counter kwa USD: $${totalProfit.toFixed(2)}`);
+
+    if (isWin) {
+        // Ukishinda, rudi kwenye Stake ya kwanza na uweke martingale zero
+        currentStake = config.stake1;
+        martingaleLevel = 0;
+    } else {
+        // Ukipata hasara, ongeza Martingale kama haijafika mwisho
+        if (martingaleLevel < config.maxMartingaleLevels) {
+            currentStake *= 2; // Mara mbili ya dau (Martingale)
+            martingaleLevel++;
+            console.log(`Martingale Level ${martingaleLevel}: Dau jipya ni $${currentStake}`);
+        } else {
+            console.log("Max Martingale levels zimefikiwa! Inarudi kwenye Stake 1.");
+            currentStake = config.stake1;
+            martingaleLevel = 0;
+        }
+    }
+
+    // Endelea na biashara kama bado hujafika TP au SL
+    if (isRunning) {
+        executeTrade();
+    }
+}
+
+// === STOP BOT ===
+function stopBot() {
+    isRunning = false;
+    console.log("Bot imesimama.");
+}
+
+// Anzisha bot kwa kujaribu
+startBot();
