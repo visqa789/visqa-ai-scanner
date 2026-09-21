@@ -3,281 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visqammoja - AI Market Scanner & Automated Trading</title>
-  <!-- Tailwind CSS CDN -->
+  <title>Visqammoja - AI Bot Builder</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              dark: '#0b0f19',
-              card: '#111827',
-              accent: '#ef4444',
-            }
-          }
-        }
-      }
-    }
-  </script>
   <style>
-    .glow-gold {
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
-    }
-    .glow-red {
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0e0e0e;
     }
   </style>
 </head>
-<body class="bg-[#0b0f19] text-slate-100 font-sans min-h-screen flex flex-col justify-between">
+<body class="flex flex-col h-screen">
 
-  <!-- Navigation Header -->
-  <header class="w-full max-w-6xl mx-auto flex justify-between items-center py-5 px-6 border-b border-slate-800/80">
-    <div class="flex items-center gap-2">
-      <h1 class="text-2xl font-extrabold tracking-wider">
-        <span class="text-red-500">VISQAM</span>MOJA <span class="text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full ml-1">AI PRO</span>
+  <!-- Top Navigation Bar -->
+  <header class="w-full bg-[#151821] border-b border-slate-800 px-4 py-2.5 flex justify-between items-center z-50">
+    <div class="flex items-center gap-3">
+      <h1 class="text-lg font-bold text-white tracking-wide">
+        <span class="text-red-500">VISQAM</span>MOJA <span class="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full ml-1">BOT PRO</span>
       </h1>
     </div>
-    <div class="flex items-center gap-3">
-      <a href="https://bot.deriv.com" target="_blank" class="bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white px-5 py-2 rounded-full font-medium text-xs flex items-center gap-2 transition">
-        Login Now &rarr;
+
+    <!-- Quick Action Controls -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleAiModal()" class="bg-gradient-to-r from-red-600 to-purple-600 hover:opacity-90 text-white text-xs px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 shadow-lg">
+        ✨ Market AI Predictor
+      </button>
+      <a href="https://track.deriv.com/_f011s85" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs px-3 py-1.5 rounded-lg font-semibold border border-amber-500/30">
+        Create Account
       </a>
     </div>
   </header>
 
-  <!-- Navigation Tabs / Section Switcher -->
-  <div class="max-w-4xl mx-auto w-full px-4 mt-6">
-    <div class="flex justify-center gap-2 md:gap-4 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800 backdrop-blur-md">
-      <button onclick="showTab('hero')" id="tab-hero" class="tab-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-red-500 text-white transition">
-        🏠 Home
-      </button>
-      <button onclick="showTab('ai-tool')" id="tab-ai-tool" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition">
-        ✨ Market AI Predictor
-      </button>
-      <button onclick="showTab('free-bots')" id="tab-free-bots" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition">
-        🤖 Free Bots Library
+  <!-- Embedded Deriv Bot App -->
+  <div class="flex-1 w-full relative">
+    <iframe 
+      id="deriv-frame"
+      src="https://bot.deriv.com" 
+      class="w-full h-full border-none"
+      allow="clipboard-read; clipboard-write">
+    </iframe>
+  </div>
+
+  <!-- AI Predictor Pop-up Modal -->
+  <div id="ai-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#111827] border border-slate-800 rounded-2xl max-w-md w-full p-6 relative text-white shadow-2xl">
+      <button onclick="toggleAiModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">&times;</button>
+      
+      <h3 class="text-base font-bold flex items-center gap-2 mb-1">
+        ✨ Visqa AI Market Predictor
+      </h3>
+      <p class="text-xs text-slate-400 mb-4">Real-time Deriv synthetic market signals</p>
+
+      <div class="mb-4">
+        <label class="text-xs text-slate-400 mb-1 block">Select Market:</label>
+        <select id="market-select" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-white">
+          <option value="R_100">Volatility 100 Index</option>
+          <option value="R_75">Volatility 75 Index</option>
+          <option value="1HZ10V">Volatility 10 (1s) Index</option>
+          <option value="R_50">Volatility 50 Index</option>
+        </select>
+      </div>
+
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-center mb-4">
+        <p class="text-[10px] text-slate-500 uppercase">AI Recommendation</p>
+        <h2 id="ai-signal" class="text-xl font-extrabold text-cyan-400 my-1">PURCHASE DIGIT EVEN</h2>
+        <p id="ai-trend" class="text-xs text-slate-300">Bullish Momentum (Confidence: 88%)</p>
+      </div>
+
+      <button onclick="runAiAnalysis()" class="w-full py-2.5 rounded-lg bg-red-600 hover:bg-red-500 font-bold text-xs text-white">
+        🔄 Re-Analyze Market
       </button>
     </div>
   </div>
 
-  <main class="max-w-4xl mx-auto w-full px-4 py-8 flex-1">
-
-    <!-- SECTION 1: HERO / LANDING PAGE (Dollarprinter Style) -->
-    <section id="sec-hero" class="text-center flex flex-col items-center">
-      
-      <!-- Badge -->
-      <div class="inline-flex items-center gap-2 bg-slate-900 border border-slate-800 text-slate-300 text-xs px-4 py-2 rounded-full mb-6">
-        <span class="text-cyan-400">⚡</span> Trusted by 50,000+ Traders Worldwide
-      </div>
-
-      <!-- Title -->
-      <h2 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">
-        Welcome to <span class="text-red-500">Visqammoja</span>
-      </h2>
-
-      <!-- Subtitle -->
-      <p class="text-slate-400 text-sm md:text-base mb-8 max-w-xl">
-        Your all-in-one workspace for automated trading, smart bots, and real-time market insights.
-      </p>
-
-      <!-- Glowing Action Buttons -->
-      <div class="flex flex-col gap-3.5 w-full max-w-xs mb-8">
-        <button onclick="showTab('ai-tool')" class="w-full py-3.5 rounded-full text-white font-bold text-sm bg-gradient-to-r from-red-500 via-purple-600 to-blue-600 hover:opacity-90 transition transform hover:-translate-y-0.5 glow-red">
-          Start Trading Now &rarr;
-        </button>
-
-        <a href="https://bot.deriv.com" target="_blank" class="w-full py-3.5 rounded-full text-amber-300 font-bold text-sm border border-amber-500/50 bg-gradient-to-r from-amber-950/40 via-amber-900/40 to-amber-950/40 glow-gold hover:scale-[1.02] transition block text-center">
-          Deriv Account Login
-        </a>
-
-        <a href="https://track.deriv.com/_f011s85" target="_blank" class="w-full py-3 rounded-full text-white font-semibold text-xs bg-slate-800 border border-slate-700 hover:bg-slate-700 transition block text-center">
-          Sign Up (Create Free Account)
-        </a>
-      </div>
-
-      <!-- Features Checkmarks -->
-      <div class="flex items-center justify-center gap-6 text-xs text-slate-400 mb-12">
-        <div class="flex items-center gap-1.5">
-          <span class="text-cyan-400 font-bold">✓</span> No Credit Card Required
-        </div>
-        <div class="flex items-center gap-1.5">
-          <span class="text-cyan-400 font-bold">✓</span> $10,000 Virtual Account
-        </div>
-      </div>
-
-      <!-- Testimonials Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full text-left">
-        <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-sm">
-          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center font-bold text-white mb-3 text-sm">
-            MG
-          </div>
-          <p class="text-slate-300 text-xs italic mb-3">
-            "Transformed my trading. The automated strategies run flawlessly, and I've seen consistent profits."
-          </p>
-          <h4 class="font-bold text-xs">Mark Gonzales</h4>
-          <p class="text-cyan-400 text-[10px]">Professional Day Trader</p>
-          <div class="text-amber-400 text-xs mt-1">★★★★★</div>
-        </div>
-
-        <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-sm">
-          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-white mb-3 text-sm">
-            KM
-          </div>
-          <p class="text-slate-300 text-xs italic mb-3">
-            "Copy trading is incredible! My portfolio has grown steadily over the past few months."
-          </p>
-          <h4 class="font-bold text-xs">Kelvin Maxwell</h4>
-          <p class="text-cyan-400 text-[10px]">Crypto Investor</p>
-          <div class="text-amber-400 text-xs mt-1">★★★★★</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 2: MARKET AI PREDICTOR TOOL -->
-    <section id="sec-ai-tool" class="hidden">
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 max-w-2xl mx-auto shadow-2xl">
-        <div class="flex items-center justify-between mb-6 border-b border-slate-800 pb-4">
-          <div>
-            <h3 class="text-lg font-bold flex items-center gap-2">
-              <span>✨</span> Visqa AI Market Predictor
-            </h3>
-            <p class="text-xs text-slate-400">Real-time Deriv synthetic market analysis</p>
-          </div>
-          <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full font-mono animate-pulse">
-            LIVE FEED
-          </span>
-        </div>
-
-        <!-- Market Selector -->
-        <div class="mb-6">
-          <label class="text-xs text-slate-400 mb-2 block font-medium">Select Volatility Index:</label>
-          <select id="market-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-semibold focus:outline-none focus:border-red-500 text-slate-200">
-            <option value="R_100">Volatility 100 Index</option>
-            <option value="R_75">Volatility 75 Index</option>
-            <option value="1HZ10V">Volatility 10 (1s) Index</option>
-            <option value="R_50">Volatility 50 Index</option>
-          </select>
-        </div>
-
-        <!-- Prediction Box -->
-        <div class="bg-slate-950 border border-slate-800/80 rounded-2xl p-6 text-center mb-6 relative overflow-hidden">
-          <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-red-500/10 rounded-full blur-2xl"></div>
-          
-          <p class="text-[10px] text-slate-500 uppercase tracking-widest mb-1">AI Recommendation Signal</p>
-          <h2 id="ai-signal" class="text-2xl md:text-3xl font-extrabold text-cyan-400 my-2">ANALYZING MARKET...</h2>
-          
-          <div class="grid grid-cols-2 gap-4 text-xs border-t border-slate-800/80 pt-4 mt-4">
-            <div>
-              <span class="block text-slate-500 text-[10px]">Market Sentiment</span>
-              <span id="ai-trend" class="font-bold text-slate-200">Bullish Momentum</span>
-            </div>
-            <div>
-              <span class="block text-slate-500 text-[10px]">AI Accuracy Confidence</span>
-              <span id="ai-confidence" class="font-bold text-emerald-400">85%</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Action Button -->
-        <button onclick="runAiAnalysis()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-red-500 via-purple-600 to-blue-600 hover:opacity-90 font-bold text-xs transition transform active:scale-95">
-          🔄 Re-Analyze Market Sentiment
-        </button>
-      </div>
-    </section>
-
-    <!-- SECTION 3: FREE BOTS LIBRARY -->
-    <section id="sec-free-bots" class="hidden">
-      <div class="text-center mb-8">
-        <h3 class="text-2xl font-bold">Free Automated Trading Bots</h3>
-        <p class="text-xs text-slate-400 mt-1">Select and load pre-configured XML trading strategies</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Bot Card 1 -->
-        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between">
-          <div>
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">88% Win Rate</span>
-              <span class="text-[10px] text-slate-500">Digits</span>
-            </div>
-            <h4 class="font-bold text-sm text-white">Visqa Digit Differ AI</h4>
-            <p class="text-xs text-slate-400 mt-2 mb-4">Smart differ bot targeting low risk digits with automated stake recovery.</p>
-          </div>
-          <a href="./visqa_ai_digit_diff_bot.xml" download class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-500/30 text-xs font-semibold rounded-xl text-center block transition">
-            📥 Download XML Bot
-          </a>
-        </div>
-
-        <!-- Bot Card 2 -->
-        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between">
-          <div>
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">75% Win Rate</span>
-              <span class="text-[10px] text-slate-500">Over/Under</span>
-            </div>
-            <h4 class="font-bold text-sm text-white">Over 2 Safe Printer</h4>
-            <p class="text-xs text-slate-400 mt-2 mb-4">Automated martingale bot optimized for low volatility index ticks.</p>
-          </div>
-          <a href="./bot.xml" download class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-500/30 text-xs font-semibold rounded-xl text-center block transition">
-            📥 Download XML Bot
-          </a>
-        </div>
-
-        <!-- Bot Card 3 -->
-        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between">
-          <div>
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">82% Win Rate</span>
-              <span class="text-[10px] text-slate-500">Rise/Fall</span>
-            </div>
-            <h4 class="font-bold text-sm text-white">Vol 100 Trend Follower</h4>
-            <p class="text-xs text-slate-400 mt-2 mb-4">Executes trades based on EMA cross indicator logic on Volatility 100.</p>
-          </div>
-          <a href="./visqa bot.xml" download class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-500/30 text-xs font-semibold rounded-xl text-center block transition">
-            📥 Download XML Bot
-          </a>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Footer -->
-  <footer class="w-full text-center py-6 border-t border-slate-800/80 text-xs text-slate-600">
-    © 2026 Visqammoja. All rights reserved. Powered by Deriv API.
-  </footer>
-
-  <!-- Tab Switcher & Interactive Script -->
   <script>
-    function showTab(tabName) {
-      document.getElementById('sec-hero').classList.add('hidden');
-      document.getElementById('sec-ai-tool').classList.add('hidden');
-      document.getElementById('sec-free-bots').classList.add('hidden');
-
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-red-500', 'text-white');
-        btn.classList.add('text-slate-400');
-      });
-
-      document.getElementById('sec-' + tabName).classList.remove('hidden');
-      const activeBtn = document.getElementById('tab-' + tabName);
-      activeBtn.classList.add('bg-red-500', 'text-white');
-      activeBtn.classList.remove('text-slate-400');
+    function toggleAiModal() {
+      const modal = document.getElementById('ai-modal');
+      modal.classList.toggle('hidden');
     }
 
     function runAiAnalysis() {
       const signals = ['PURCHASE DIGIT EVEN', 'PURCHASE DIGIT ODD', 'PURCHASE OVER 2', 'WAIT FOR REVERSAL'];
-      const trends = ['Strong Bullish Trend', 'Bearish Momentum', 'High Volatility Ranging', 'Stable Pattern'];
+      const trends = ['Strong Bullish Trend', 'Bearish Momentum', 'High Volatility Ranging'];
       
       const randomSignal = signals[Math.floor(Math.random() * signals.length)];
       const randomTrend = trends[Math.floor(Math.random() * trends.length)];
-      const randomConfidence = Math.floor(Math.random() * (95 - 70 + 1)) + 70;
+      const randomConfidence = Math.floor(Math.random() * (95 - 75 + 1)) + 75;
 
       document.getElementById('ai-signal').innerText = randomSignal;
-      document.getElementById('ai-trend').innerText = randomTrend;
-      document.getElementById('ai-confidence').innerText = randomConfidence + '%';
+      document.getElementById('ai-trend').innerText = randomTrend + ' (Confidence: ' + randomConfidence + '%)';
     }
   </script>
 </body>
