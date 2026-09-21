@@ -1,97 +1,43 @@
 <!DOCTYPE html>
-<html lang="sw" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visqammoja - Deriv Bot Builder & Market AI Predictor</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      background-color: #0e0e0e;
-      font-family: sans-serif;
-    }
-  </style>
+  <title>Visqa AI Market Scanner</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="flex flex-col h-screen">
-
-  <header class="w-full bg-[#151821] border-b border-slate-800 px-4 py-2 flex justify-between items-center z-50">
-    <div class="flex items-center gap-3">
-      <h1 class="text-base md:text-lg font-bold text-white tracking-wide">
-        <span class="text-red-500">VISQAM</span>MOJA <span class="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full ml-1">AI TOOLS</span>
-      </h1>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <button onclick="toggleAiModal()" class="bg-gradient-to-r from-red-600 to-purple-600 hover:opacity-90 text-white text-xs px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 shadow-lg transition">
-        ✨ Market AI Predictor
-      </button>
-      <a href="https://track.deriv.com/_f011s85" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs px-3 py-1.5 rounded-lg font-semibold border border-amber-500/30 transition">
-        Account Sign Up
-      </a>
-    </div>
-  </header>
-
-  <div class="flex-1 w-full relative">
-    <iframe 
-      id="deriv-frame"
-      src="https://bot.deriv.com" 
-      class="w-full h-full border-none"
-      allow="clipboard-read; clipboard-write">
-    </iframe>
+<body>
+  <div class="header">
+    <h1>Visqa AI Market Scanner</h1>
+    <div id="connection-status">Connecting to Deriv...</div>
   </div>
 
-  <div id="ai-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-[#111827] border border-slate-800 rounded-2xl max-w-md w-full p-6 relative text-white shadow-2xl">
-      <button onclick="toggleAiModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
-      
-      <h3 class="text-base font-bold flex items-center gap-2 mb-1">
-        ✨ Visqa AI Market Predictor
-      </h3>
-      <p class="text-xs text-slate-400 mb-4">Uchambuzi wa masoko ya Deriv kwa wakati halisi (Live Feed)</p>
+  <div class="container">
+    <div class="card">
+      <label for="market-select">Select Market:</label>
+      <select id="market-select">
+        <option value="1HZ100V">Volatility 100 (1s) Index</option>
+        <option value="R_100">Volatility 100 Index</option>
+        <option value="R_75">Volatility 75 Index</option>
+        <option value="R_50">Volatility 50 Index</option>
+        <option value="R_25">Volatility 25 Index</option>
+        <option value="R_10">Volatility 10 Index</option>
+      </select>
+    </div>
 
-      <div class="mb-4">
-        <label class="text-xs text-slate-400 mb-1 block">Chagua Soko (Volatility Index):</label>
-        <select id="market-select" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-white">
-          <option value="R_100">Volatility 100 Index</option>
-          <option value="R_75">Volatility 75 Index</option>
-          <option value="1HZ10V">Volatility 10 (1s) Index</option>
-          <option value="R_50">Volatility 50 Index</option>
-        </select>
+    <div class="card prediction-card">
+      <h2>🤖 AI Prediction Signal</h2>
+      <div id="ai-scanner-output">
+        <p>Waiting for tick data...</p>
       </div>
+    </div>
 
-      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-center mb-4">
-        <p class="text-[10px] text-slate-500 uppercase tracking-wider">AI Signal Recommendation</p>
-        <h2 id="ai-signal" class="text-xl font-extrabold text-cyan-400 my-1">PURCHASE DIGIT EVEN</h2>
-        <p id="ai-trend" class="text-xs text-slate-300">Bullish Momentum (Confidence: 88%)</p>
-      </div>
-
-      <button onclick="runAiAnalysis()" class="w-full py-2.5 rounded-lg bg-red-600 hover:bg-red-500 font-bold text-xs text-white transition">
-        🔄 Re-Analyze Market
-      </button>
+    <div class="card">
+      <h3>Digit Frequency Analysis (Last 50 Ticks)</h3>
+      <div id="digit-bars" class="digit-grid"></div>
     </div>
   </div>
 
-  <script>
-    function toggleAiModal() {
-      const modal = document.getElementById('ai-modal');
-      modal.classList.toggle('hidden');
-    }
-
-    function runAiAnalysis() {
-      const signals = ['PURCHASE DIGIT EVEN', 'PURCHASE DIGIT ODD', 'PURCHASE OVER 2', 'PURCHASE UNDER 7', 'WAIT FOR REVERSAL'];
-      const trends = ['Strong Bullish Trend', 'Bearish Momentum', 'High Volatility Ranging'];
-      
-      const randomSignal = signals[Math.floor(Math.random() * signals.length)];
-      const randomTrend = trends[Math.floor(Math.random() * trends.length)];
-      const randomConfidence = Math.floor(Math.random() * (95 - 75 + 1)) + 75;
-
-      document.getElementById('ai-signal').innerText = randomSignal;
-      document.getElementById('ai-trend').innerText = randomTrend + ' (Confidence: ' + randomConfidence + '%)';
-    }
-  </script>
+  <script src="ai-market-scanner.js"></script>
 </body>
 </html>
