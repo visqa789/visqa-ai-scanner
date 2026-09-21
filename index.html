@@ -1,16 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sw">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Visqammoja - Deriv Bot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #0e0e0e; }
-    iframe { width: 100%; height: 100%; border: none; display: block; }
   </style>
 </head>
-<body>
-  <iframe src="https://bot.deriv.com" allow="clipboard-read; clipboard-write; camera; microphone; geolocation"></iframe>
+<body class="flex flex-col h-screen">
+
+  <!-- Top Navigation Header kwa ajili ya Login & Sign Up -->
+  <header class="w-full bg-[#161922] border-b border-slate-800 px-4 py-2 flex justify-between items-center z-50">
+    <div class="flex items-center gap-2">
+      <h1 class="text-sm font-bold text-white tracking-wide">
+        <span class="text-red-500">VISQAM</span>MOJA
+      </h1>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <!-- Direct Login Link -->
+      <a href="https://oauth.deriv.com/oauth2/authorize?app_id=107383&l=EN&brand=deriv" target="_blank" class="bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 rounded-lg font-semibold transition">
+        Login Now
+      </a>
+      <!-- Affiliate Sign Up Link -->
+      <a href="https://track.deriv.com/_f011s85" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs px-3 py-1.5 rounded-lg font-semibold border border-amber-500/30 transition">
+        Sign Up
+      </a>
+    </div>
+  </header>
+
+  <!-- Embedded Deriv Bot App -->
+  <div class="flex-1 w-full relative">
+    <iframe 
+      id="deriv-frame"
+      src="https://bot.deriv.com" 
+      class="w-full h-full border-none"
+      allow="clipboard-read; clipboard-write; camera; microphone; geolocation">
+    </iframe>
+  </div>
+
 </body>
 </html>
